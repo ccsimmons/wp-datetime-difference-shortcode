@@ -4,8 +4,8 @@
  * Description: Provides the [DatetimeDifference] shortcode (replacement for Date Counter).
  * Version:     1.0.1
  * Author:      Chris Simmons <ccsimmons@gmail.com>
-* License: GPL-2.0-or-later
-* License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * License:     GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wp-datetime-difference-shortcode
  */
 
@@ -50,6 +50,7 @@ function dds_datetime_difference_shortcode($atts) {
     if (preg_match('/^\d{2}\.\d{2}\.\d{4}$/', $start_raw)) {
         $start = DateTime::createFromFormat('d.m.Y', $start_raw);
 
+        // Validate parse result (avoid malformed dates silently parsing)
         if ($start instanceof DateTime) {
             $errors = DateTime::getLastErrors();
             if (!empty($errors['warning_count']) || !empty($errors['error_count'])) {
@@ -103,6 +104,27 @@ function dds_datetime_difference_shortcode($atts) {
     return (string) $diff->y;
 }
 add_shortcode('DatetimeDifference', 'dds_datetime_difference_shortcode');
+
+/**
+ * Add a "Details" link under the plugin name on the Plugins screen.
+ */
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
+    $links[] = '<a href="' . esc_url(admin_url('options-general.php?page=wp-datetime-difference-shortcode')) . '">Details</a>';
+    return $links;
+});
+
+/**
+ * Add a Settings page: Settings → Datetime Difference
+ */
+add_action('admin_menu', function () {
+    add_options_page(
+        'WP Datetime Difference Shortcode',
+        'Datetime Difference',
+        'manage_options',
+        'wp-datetime-difference-shortcode',
+        'dds_render_admin_page'
+    );
+});
 
 /**
  * Render the admin "Details" page.
