@@ -20,7 +20,7 @@ It outputs the difference between two dates in:
 - Total months (M)
 - Total days (D)
 
-This plugin is intended as a secure replacement for the abandoned
+This plugin is intended as a secure replacement for the 
 Date Counter plugin.
 
 == Installation ==
